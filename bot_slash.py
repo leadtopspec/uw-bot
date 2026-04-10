@@ -18,6 +18,29 @@ BAD_OUTCOMES = {"Decline", "DECLINE", "No Coverage", "No Match Found"}
 DECISION_COLORS = {"Immediate": 0x00ff41, "Level": 0x00ff41, "Allowed": 0x00ff41, "Eagle Select 1": 0x00ff41, "Graded": 0xffaa00, "Eagle Select 2": 0xffaa00, "Eagle Select 2 Non-nicotine": 0xffaa00, "Eagle Select 2 Nicotine": 0xffaa00, "ROP": 0xff6b6b, "Return of Premium": 0xff6b6b, "Eagle Select 3": 0xff6b6b, "Guaranteed Issue Fallback": 0x9370db, "Decline": 0xff0000, "DECLINE": 0xff0000, "No Coverage": 0xff0000, "No Match Found": 0x808080}
 DECISION_EMOJI = {"Immediate": "✅", "Level": "✅", "Allowed": "✅", "Eagle Select 1": "✅", "Graded": "⚠️", "Eagle Select 2": "⚠️", "Eagle Select 2 Non-nicotine": "⚠️", "Eagle Select 2 Nicotine": "⚠️", "ROP": "📋", "Return of Premium": "📋", "Eagle Select 3": "📋", "Guaranteed Issue Fallback": "🛡️", "Decline": "❌", "DECLINE": "❌", "No Coverage": "❌", "No Match Found": "❓"}
 
+PLAYBOOK = {
+    "oxygen": {"priority": 1, "best": ("AIG", "GIWL", "Guaranteed Issue")},
+    "copd": {"priority": 2, "best": ("American Amicable", "Senior Choice", "Immediate"), "backup": [("Americo", "Eagle Select", "Level"), ("Mutual of Omaha", "Living Promise", "Graded")]},
+    "diabetes": {"priority": 3, "best": ("Americo", "Eagle Select", "Level"), "backup": [("American Amicable", "Senior Choice", "Immediate"), ("Mutual of Omaha", "Living Promise", "Graded")]},
+    "stroke": {"priority": 4, "best": ("Americo", "Eagle Select", "Level"), "backup": [("Mutual of Omaha", "Living Promise", "Graded"), ("American Amicable", "Senior Choice", "Graded")]},
+    "heart attack": {"priority": 5, "best": ("Americo", "Eagle Select", "Level"), "backup": [("American Amicable", "Senior Choice", "Graded"), ("AIG", "SIWL", "Graded")]},
+    "kidney failure": {"priority": 6, "best": ("Americo", "Eagle Select", "Level"), "backup": [("American Amicable", "Senior Choice", "Graded"), ("AIG", "SIWL", "Graded")]},
+    "dialysis": {"priority": 7, "best": ("American Amicable", "Senior Choice", "Graded"), "backup": [("AIG", "SIWL", "Graded"), ("AIG", "GIWL", "Guaranteed Issue")]},
+    "hiv": {"priority": 8, "best": ("AIG", "GIWL", "Guaranteed Issue")},
+    "aids": {"priority": 8, "best": ("AIG", "GIWL", "Guaranteed Issue")},
+}
+
+COMBO_PLAYBOOK = {
+    "copd diabetes": ("American Amicable", "Senior Choice", "Immediate"),
+    "diabetes copd": ("American Amicable", "Senior Choice", "Immediate"),
+    "stroke copd": ("American Amicable", "Senior Choice", "Graded"),
+    "copd stroke": ("American Amicable", "Senior Choice", "Graded"),
+    "stroke diabetes": ("Mutual of Omaha", "Living Promise", "Graded"),
+    "diabetes stroke": ("Mutual of Omaha", "Living Promise", "Graded"),
+    "heart attack stroke": ("American Amicable", "Senior Choice", "Graded"),
+    "stroke heart attack": ("American Amicable", "Senior Choice", "Graded"),
+}
+
 intents = discord.Intents.default()
 intents.message_content = True
 bot = commands.Bot(command_prefix="!", intents=intents)
@@ -51,12 +74,18 @@ def load_all_conditions():
     CACHED_CONDITIONS = sorted(list(all_conds))
     return CACHED_CONDITIONS
 
-def match_rule(user_text, rule):
-    text, cond, crit = user_text.lower().strip(), rule["condition"].lower().strip(), rule["criteria"].lower().strip()
-    score = 100 if text == cond else (40 if cond and cond in text else (100 if (text == "copd" and cond == "copd") or (text == "diabetes" and cond == "diabetes") else (5 if cond.startswith(text + " ") else 0)))
-    text_words, cond_words, crit_words = set(w.strip() for w in text.replace("/", " ").replace(",", " ").split() if w.strip()), set(w.strip() for w in cond.replace("/", " ").replace(",", " ").split() if w.strip()), set(w.strip() for w in crit.replace("/", " ").replace(",", " ").split() if w.strip())
-    score += len(text_words & cond_words) * 8 + len(text_words & crit_words) * 6
-    return score - 8 if crit and len(text_words & crit_words) == 0 else score
+def get_playbook_result(conditions):
+    user_text = conditions.lower().strip()
+    
+    for combo, (carrier, product, decision) in COMBO_PLAYBOOK.items():
+        if all(word in user_text for word in combo.split()):
+            return carrier, product, decision
+    
+    for cond_key, playbook in PLAYBOOK.items():
+        if cond_key in user_text:
+            return playbook["best"][0], playbook["best"][1], playbook["best"][2]
+    
+    return None
 
 @bot.event
 async def on_ready():
@@ -69,91 +98,31 @@ async def on_ready():
 
 async def process_uw_query(age, conditions):
     user_text = conditions.lower().strip()
-    chart_results = []
-    fallback_results = []
-    file_errors = []
     
-    amam_sc_result = None
-    
-    for carrier, products in PRODUCTS.items():
-        for product_name, info in products.items():
-            if not (info["min_age"] <= age <= info["max_age"]):
-                continue
+    playbook_result = get_playbook_result(user_text)
+    if playbook_result:
+        carrier, product, decision = playbook_result
+        if (carrier, product) in [("American Amicable", "Senior Choice"), ("American Amicable", "Family Choice")] or PRODUCTS[carrier][product]["min_age"] <= age <= PRODUCTS[carrier][product]["max_age"]:
+            best = {
+                "carrier": carrier,
+                "product": product,
+                "coverage_type": PRODUCTS[carrier][product]["coverage_type"],
+                "decision": decision,
+                "criteria": f"Playbook recommended for {conditions}"
+            }
             
-            if info.get("special_case") == "fallback":
-                fallback_results.append({"carrier": carrier, "product": product_name, "coverage_type": info["coverage_type"], "decision": "Guaranteed Issue Fallback", "score": 0, "forced": False, "matched_condition": "", "criteria": "Use as last resort if no standard product available"})
-                continue
-            
-            csv_file = info.get("csv_file")
-            if not csv_file or not os.path.exists(csv_file):
-                file_errors.append(f"{carrier} — {product_name}")
-                continue
-            
-            try:
-                rules = load_rules(csv_file)
-                matched_rules = [{"condition": r["condition"], "criteria": r["criteria"], "decision": r["decision"], "score": match_rule(user_text, r)} for r in rules if match_rule(user_text, r) > 0]
-                
-                if matched_rules:
-                    matched_rules.sort(key=lambda r: (-r["score"], RESULT_PRIORITY.get(r["decision"], 50)))
-                    best = matched_rules[0]
-                    result = {"carrier": carrier, "product": product_name, "coverage_type": info["coverage_type"], "decision": best["decision"], "score": best["score"], "forced": False, "matched_condition": best["condition"], "criteria": best["criteria"] or "No extra criteria"}
-                    
-                    if carrier == "American Amicable" and product_name == "Senior Choice":
-                        amam_sc_result = result
-                    else:
-                        chart_results.append(result)
-                else:
-                    chart_results.append({"carrier": carrier, "product": product_name, "coverage_type": info["coverage_type"], "decision": "No Match Found", "score": 0, "forced": False, "matched_condition": "", "criteria": "No matching condition found"})
-            except Exception as e:
-                file_errors.append(f"{carrier} — {product_name}")
+            embed = discord.Embed(title=f"{DECISION_EMOJI.get(decision, '❓')} UNDERWRITING RESULT", color=DECISION_COLORS.get(decision, 0x7289da))
+            embed.add_field(name="🎯 Client Info", value=f"**Age:** {age}\n**Condition:** {conditions}", inline=False)
+            embed.add_field(name="🏆 BEST FIT", value=f"**{best['carrier']}** → **{best['product']}**\n{best['coverage_type']}\n\n**Decision:** `{best['decision']}`", inline=False)
+            embed.add_field(name="📝 Details", value=best['criteria'], inline=False)
+            embed.set_footer(text="UW Bot v2.0 | Playbook Recommendation")
+            return embed, None
     
-    if amam_sc_result and 50 <= age <= 85 and ("copd" in user_text or "diabetes" in user_text) and "oxygen" not in user_text:
-        chart_results.insert(0, amam_sc_result)
-    elif amam_sc_result:
-        chart_results.append(amam_sc_result)
-    
-    if not chart_results and file_errors:
-        embed = discord.Embed(title="❌ File Loading Error", description=f"Age: **{age}** | Input: **{conditions}**", color=0xff0000)
-        embed.add_field(name="Missing Files", value="\n".join(file_errors), inline=False)
-        return embed, None
-    
-    chart_results.sort(key=lambda x: (RESULT_PRIORITY.get(x["decision"], 50), -x["score"]))
-    
-    has_real_option = any(r["decision"] not in BAD_OUTCOMES for r in chart_results)
-    
-    final_results = chart_results
-    if not has_real_option and fallback_results:
-        final_results.extend(fallback_results)
-    
-    final_results.sort(key=lambda x: (RESULT_PRIORITY.get(x["decision"], 50), -x["score"]))
-    
-    if not final_results:
-        embed = discord.Embed(title="❌ No Coverage Available", description=f"Age: **{age}** | Input: **{conditions}**", color=0xff0000)
-        return embed, None
-    
-    best = final_results[0]
-    color = DECISION_COLORS.get(best["decision"], 0x7289da)
-    emoji = DECISION_EMOJI.get(best["decision"], "❓")
-    
-    embed = discord.Embed(title=f"{emoji} UNDERWRITING RESULT", color=color)
-    embed.add_field(name="🎯 Client Info", value=f"**Age:** {age}\n**Condition:** {conditions}", inline=False)
-    embed.add_field(name="🏆 BEST FIT", value=f"**{best['carrier']}** → **{best['product']}**\n{best['coverage_type']}\n\n**Decision:** `{best['decision']}`", inline=False)
-    embed.add_field(name="📝 Details", value=best['criteria'], inline=False)
-    
-    options_text = ""
-    for i, r in enumerate(final_results[:5], 1):
-        opt_emoji = DECISION_EMOJI.get(r["decision"], "❓")
-        options_text += f"{i}. {opt_emoji} **{r['carrier']}** - {r['product']}: `{r['decision']}`\n"
-    if len(final_results) > 5:
-        options_text += f"\n... and {len(final_results) - 5} more option(s)"
-    
-    embed.add_field(name="📊 All Options", value=options_text, inline=False)
-    embed.set_footer(text=f"UW Bot v2.0 | {len(final_results)} total options")
-    
+    embed = discord.Embed(title="❓ No Playbook Match", description=f"Age: **{age}** | Condition: **{conditions}**\nPlease check CSV rules manually.", color=0x808080)
     return embed, None
 
 @bot.tree.command(name="uw", description="Check underwriting eligibility")
-@app_commands.describe(age="Client age (e.g., 65)", conditions="Health condition(s) (e.g., COPD)")
+@app_commands.describe(age="Client age (e.g., 65)", conditions="Health condition(s) (e.g., COPD, Diabetes)")
 async def slash_uw(interaction, age: int, conditions: str):
     await interaction.response.defer()
     embed, _ = await process_uw_query(age, conditions)
@@ -186,7 +155,7 @@ async def slash_help(interaction):
     embed.add_field(name="/uw <age> <conditions>", value="**Check eligibility across all carriers**\nExample: `/uw 65 COPD`\nGet instant underwriting decisions with carrier recommendations", inline=False)
     embed.add_field(name="/carriers", value="**View all available carriers and products**\nBrowse the complete product lineup", inline=False)
     embed.add_field(name="/conditions", value="**See all supported health conditions**\nSearch the underwriting database", inline=False)
-    embed.add_field(name="💡 Tips", value="• Enter conditions naturally (case-insensitive)\n• Combine multiple conditions: `/uw 65 COPD diabetes`\n• Results show best fit first, ranked by priority", inline=False)
+    embed.add_field(name="💡 Tips", value="• Enter conditions naturally (case-insensitive)\n• Combine multiple conditions: `/uw 65 COPD Diabetes`\n• Playbook automatically routes to best carrier", inline=False)
     embed.set_footer(text="UW Bot v2.0 | For assistance, contact your team lead")
     await interaction.response.send_message(embed=embed)
 
