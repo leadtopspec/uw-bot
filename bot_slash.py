@@ -69,33 +69,34 @@ async def on_ready():
 
 async def process_uw_query(age, conditions):
     user_text = conditions.lower().strip()
-    chart_results, fallback_results, file_errors = [], [], []
-    
-    if 50 <= age <= 85 and ("copd" in user_text or "diabetes" in user_text) and "oxygen" not in user_text:
-        chart_results.append({"carrier": "American Amicable", "product": "Senior Choice", "coverage_type": "Whole Life", "decision": "Immediate", "score": 999999, "forced": True, "matched_condition": "AMAM playbook override", "criteria": "COPD/diabetes often gets AMAM Immediate first"})
+    chart_results = []
+    fallback_results = []
+    file_errors = []
     
     for carrier, products in PRODUCTS.items():
         for product_name, info in products.items():
             if not (info["min_age"] <= age <= info["max_age"]):
                 continue
+            
             if info.get("special_case") == "fallback":
-                fallback_results.append({"carrier": carrier, "product": product_name, "coverage_type": info["coverage_type"], "decision": "Guaranteed Issue Fallback", "score": 1, "forced": False, "matched_condition": "", "criteria": "Use only as last resort"})
+                fallback_results.append({"carrier": carrier, "product": product_name, "coverage_type": info["coverage_type"], "decision": "Guaranteed Issue Fallback", "score": 0, "forced": False, "matched_condition": "", "criteria": "Use as last resort if no standard product available"})
                 continue
-            if carrier == "American Amicable" and product_name == "Senior Choice" and 50 <= age <= 85 and ("copd" in user_text or "diabetes" in user_text) and "oxygen" not in user_text:
-                continue
+            
             csv_file = info.get("csv_file")
             if not csv_file or not os.path.exists(csv_file):
                 file_errors.append(f"{carrier} — {product_name}")
                 continue
+            
             try:
                 rules = load_rules(csv_file)
                 matched_rules = [{"condition": r["condition"], "criteria": r["criteria"], "decision": r["decision"], "score": match_rule(user_text, r)} for r in rules if match_rule(user_text, r) > 0]
+                
                 if matched_rules:
                     matched_rules.sort(key=lambda r: (-r["score"], RESULT_PRIORITY.get(r["decision"], 50)))
                     best = matched_rules[0]
                     chart_results.append({"carrier": carrier, "product": product_name, "coverage_type": info["coverage_type"], "decision": best["decision"], "score": best["score"], "forced": False, "matched_condition": best["condition"], "criteria": best["criteria"] or "No extra criteria"})
                 else:
-                    chart_results.append({"carrier": carrier, "product": product_name, "coverage_type": info["coverage_type"], "decision": "No Match Found", "score": 0, "forced": False, "matched_condition": "", "criteria": "No match yet"})
+                    chart_results.append({"carrier": carrier, "product": product_name, "coverage_type": info["coverage_type"], "decision": "No Match Found", "score": 0, "forced": False, "matched_condition": "", "criteria": "No matching condition found"})
             except Exception as e:
                 file_errors.append(f"{carrier} — {product_name}")
     
@@ -104,10 +105,15 @@ async def process_uw_query(age, conditions):
         embed.add_field(name="Missing Files", value="\n".join(file_errors), inline=False)
         return embed, None
     
-    chart_results.sort(key=lambda x: (0 if x.get("forced") else 1, RESULT_PRIORITY.get(x["decision"], 50), -x["score"]))
+    chart_results.sort(key=lambda x: (RESULT_PRIORITY.get(x["decision"], 50), -x["score"]))
+    
     has_real_option = any(r["decision"] not in BAD_OUTCOMES for r in chart_results)
-    final_results = chart_results + (fallback_results if not has_real_option else [])
-    final_results.sort(key=lambda x: (0 if x.get("forced") else 1, RESULT_PRIORITY.get(x["decision"], 50), -x["score"]))
+    
+    final_results = chart_results
+    if not has_real_option and fallback_results:
+        final_results.extend(fallback_results)
+    
+    final_results.sort(key=lambda x: (RESULT_PRIORITY.get(x["decision"], 50), -x["score"]))
     
     if not final_results:
         embed = discord.Embed(title="❌ No Coverage Available", description=f"Age: **{age}** | Input: **{conditions}**", color=0xff0000)
