@@ -73,6 +73,8 @@ async def process_uw_query(age, conditions):
     fallback_results = []
     file_errors = []
     
+    amam_sc_result = None
+    
     for carrier, products in PRODUCTS.items():
         for product_name, info in products.items():
             if not (info["min_age"] <= age <= info["max_age"]):
@@ -94,11 +96,21 @@ async def process_uw_query(age, conditions):
                 if matched_rules:
                     matched_rules.sort(key=lambda r: (-r["score"], RESULT_PRIORITY.get(r["decision"], 50)))
                     best = matched_rules[0]
-                    chart_results.append({"carrier": carrier, "product": product_name, "coverage_type": info["coverage_type"], "decision": best["decision"], "score": best["score"], "forced": False, "matched_condition": best["condition"], "criteria": best["criteria"] or "No extra criteria"})
+                    result = {"carrier": carrier, "product": product_name, "coverage_type": info["coverage_type"], "decision": best["decision"], "score": best["score"], "forced": False, "matched_condition": best["condition"], "criteria": best["criteria"] or "No extra criteria"}
+                    
+                    if carrier == "American Amicable" and product_name == "Senior Choice":
+                        amam_sc_result = result
+                    else:
+                        chart_results.append(result)
                 else:
                     chart_results.append({"carrier": carrier, "product": product_name, "coverage_type": info["coverage_type"], "decision": "No Match Found", "score": 0, "forced": False, "matched_condition": "", "criteria": "No matching condition found"})
             except Exception as e:
                 file_errors.append(f"{carrier} — {product_name}")
+    
+    if amam_sc_result and 50 <= age <= 85 and ("copd" in user_text or "diabetes" in user_text) and "oxygen" not in user_text:
+        chart_results.insert(0, amam_sc_result)
+    elif amam_sc_result:
+        chart_results.append(amam_sc_result)
     
     if not chart_results and file_errors:
         embed = discord.Embed(title="❌ File Loading Error", description=f"Age: **{age}** | Input: **{conditions}**", color=0xff0000)
