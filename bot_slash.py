@@ -6,7 +6,6 @@ from discord import app_commands
 
 TOKEN = os.getenv("DISCORD_TOKEN")
 print("TOKEN:", TOKEN)
-print("LENGTH:", len(TOKEN) if TOKEN else 0)
 
 PRODUCTS = {
     "American Amicable": {"Senior Choice": {"coverage_type": "Whole Life", "min_age": 50, "max_age": 85, "csv_file": "Carrier Condition Sheet - AMAM SC.csv"}, "Family Choice": {"coverage_type": "Whole Life", "min_age": 0, "max_age": 49, "csv_file": "Carrier Condition Sheet - AMAM FC.csv"}},
@@ -22,6 +21,8 @@ intents = discord.Intents.default()
 intents.message_content = True
 bot = commands.Bot(command_prefix="!", intents=intents)
 
+CACHED_CONDITIONS = None
+
 def load_rules(file_path):
     rules = []
     with open(file_path, newline="", encoding="utf-8-sig") as f:
@@ -32,6 +33,22 @@ def load_rules(file_path):
             if cond and decision:
                 rules.append({"condition": cond, "criteria": crit, "decision": decision})
     return rules
+
+def load_all_conditions():
+    global CACHED_CONDITIONS
+    if CACHED_CONDITIONS is not None:
+        return CACHED_CONDITIONS
+    all_conds = set()
+    for carrier, products in PRODUCTS.items():
+        for pname, info in products.items():
+            cf = info.get("csv_file")
+            if cf and os.path.exists(cf):
+                try:
+                    all_conds.update(r["condition"] for r in load_rules(cf))
+                except:
+                    pass
+    CACHED_CONDITIONS = sorted(list(all_conds))
+    return CACHED_CONDITIONS
 
 def match_rule(user_text, rule):
     text, cond, crit = user_text.lower().strip(), rule["condition"].lower().strip(), rule["criteria"].lower().strip()
@@ -82,7 +99,7 @@ async def process_uw_query(age, conditions):
                 file_errors.append(f"{carrier} — {product_name} ({str(e)})")
     
     if not chart_results and file_errors:
-        return None, f"❌ **Chart files not loading**\n\n**Age:** {age}\n**Input:** {conditions}\n\nMissing files: {', '.join(file_errors)}"
+        return None, f"❌ **Chart files not loading**\n\n**Age:** {age}\n**Input:** {conditions}"
     
     chart_results.sort(key=lambda x: (0 if x.get("forced") else 1, RESULT_PRIORITY.get(x["decision"], 50), -x["score"]))
     has_real_option = any(r["decision"] not in BAD_OUTCOMES for r in chart_results)
@@ -116,29 +133,23 @@ async def slash_carriers(interaction):
         embed.add_field(name=carrier, value=", ".join(products.keys()), inline=False)
     await interaction.response.send_message(embed=embed)
 
-@bot.tree.command(name="conditions", description="List conditions")
+@bot.tree.command(name="conditions", description="List all conditions")
 async def slash_conditions(interaction):
     await interaction.response.defer()
-    all_conds = set()
-    for carrier, products in PRODUCTS.items():
-        for pname, info in products.items():
-            cf = info.get("csv_file")
-            if cf and os.path.exists(cf):
-                try:
-                    all_conds.update(r["condition"] for r in load_rules(cf))
-                except:
-                    pass
-    embed = discord.Embed(title=f"🏥 Conditions ({len(all_conds)} total)", color=discord.Color.purple())
-    for i, cond in enumerate(sorted(list(all_conds))):
-        embed.add_field(name=f"{i+1}.", value=cond, inline=False)
+    conds = load_all_conditions()
+    embed = discord.Embed(title=f"🏥 Conditions ({len(conds)} total)", color=discord.Color.purple())
+    embed.description = "\n".join(conds[:50])
+    if len(conds) > 50:
+        embed.description += f"\n\n... and {len(conds) - 50} more conditions"
     await interaction.followup.send(embed=embed)
 
 @bot.tree.command(name="help", description="Show help")
 async def slash_help(interaction):
     embed = discord.Embed(title="📖 UW Bot Help", color=discord.Color.gold())
-    embed.add_field(name="/uw", value="Check eligibility", inline=False)
+    embed.add_field(name="/uw <age> <conditions>", value="Check eligibility", inline=False)
     embed.add_field(name="/carriers", value="List carriers", inline=False)
     embed.add_field(name="/conditions", value="List conditions", inline=False)
+    embed.add_field(name="/help", value="Show this message", inline=False)
     await interaction.response.send_message(embed=embed)
 
 bot.run(TOKEN)
