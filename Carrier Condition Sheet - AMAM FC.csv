@@ -1,0 +1,64 @@
+CONDITION,CRITERIA,PLAN TO APPLY FOR
+AIDS / ARC,Medically treated or diagnosed by a medical professional,No Coverage
+Alcoholism / Alcohol Abuse,"Within the past 24 months, abused alcohol or had, or been recommended to have, treatment or counseling for alcohol use",No Coverage
+Amputation,Has ever had an amputation caused by disease,No Coverage
+Aneurysm,"Medically diagnosed, treated, or taken medication within the past three years",Return of Premium
+Bi-Polar Disorder,"Medically diagnosed, treated, or taken medication",No Coverage
+Blood Clot,"Medically diagnosed, treated, or taken medication within the past three years",Return of Premium
+Cancer,"Medically diagnosed, treated, or taken medication for internal cancer, lymphoma, melanoma or Hodgkin's Disease or history of metastatic cancer within the past five years",No Coverage
+Cardiomyopathy,"Medically diagnosed, treated, or taken medication",No Coverage
+Cerebral Palsy,"Medically diagnosed, treated, or taken medication",Return of Premium
+Chronic Bronchitis,"Medically diagnosed, treated, or taken medication within the past three years",Return of Premium
+Chronic Hepatitis,"Medically diagnosed, treated, or taken medication",Return of Premium
+Chronic Pancreatitis,"Medically diagnosed, treated, or taken medication",Return of Premium
+Chronic Obstructive Pulmonary Disease (COPD),"Medically diagnosed, treated, or taken medication within the past three years",Return of Premium
+Circulatory Disease (Disorder),"Medically diagnosed, treated, or taken medication",No Coverage
+Congestive Heart Failure (CHF),"Medically diagnosed, treated, or taken medication",No Coverage
+Connective Tissue Disease,"Medically diagnosed, treated, or taken medication",No Coverage
+Criminal Background,Convicted of any felony within the past 24 months,No Coverage
+Criminal Background,Probation or parole within the past 12 months,No Coverage
+Crohn's Disease,"Medically diagnosed, treated, or taken medication",Return of Premium
+Cystic Fibrosis,"Medically diagnosed, treated, or taken medication",No Coverage
+Decline for Insurance,Declined for life insurance coverage within the past 12 months,Return of Premium
+Diabetes,"Medically diagnosed, treated, or taken medication prior to age 21",No Coverage
+Diabetes,Currently taking insulin shots,No Coverage
+Diabetes,"Medically diagnosed with diabetes combined with a medical history of any of the following: retinopathy, nephropathy, neuropathy, insulin shock, or diabetic coma",No Coverage
+Diabetes,"Medically diagnosed, treated, or taken medication prior to age 39",Return of Premium
+"Diagnostic Testing, Surgery, or Hospitalization",Recommended within the past 12 months by a medical professional which has not been completed or for which the results have not been received,Return of Premium
+Disability,"Prohibited from actively working full-time (30 hours or more per week) at your regular occupation due to any illness, injury, or health related problem within the past 12 months",No Coverage
+Disability,Currently disabled,No Coverage
+Down Syndrome,"Medically diagnosed, treated, or taken medication",No Coverage
+Driving Record,"Driver's license suspended or revoked, or convicted of an alcohol/drug related infraction within the past 24 months",No Coverage
+Drug Abuse / Addiction,Used illegal drugs or abused drugs or recommended to have treatment or counseling for drug abuse within the past 24 months,No Coverage
+Emphysema,"Medically diagnosed, treated, or taken medication within the past three years",Return of Premium
+Heart Disease/ Disorder,"Medically diagnosed, treated, or taken medication",No Coverage
+Heart Valve Disease,"Medically diagnosed, treated, or taken medication",No Coverage
+Hemophilia,"Medically diagnosed, treated, or taken medication",No Coverage
+High Blood Pressure,"Medically diagnosed, treated, or taken medication",Return of Premium
+High Blood Pressure,Taking three or more medications,Return of Premium
+HIV,Tested positive,No Coverage
+Huntington's Disease,"Medically diagnosed, treated, or taken medication",No Coverage
+Immune Deficiency Related Disorder,Medically treated or diagnosed by a medical professional as having,No Coverage
+Irregular Heartbeat,"Medically diagnosed, treated, or taken medication within the past three years",Return of Premium
+Kidney Dialysis,"Medically diagnosed, treated, or taken medication",No Coverage
+Kidney Failure,"Medically diagnosed, treated, or taken medication",No Coverage
+Leukemia,"Medically diagnosed, treated, or taken medication",No Coverage
+Liver Disease,"Medically diagnosed, treated, or taken medication",Return of Premium
+Liver Failure,"Medically diagnosed, treated, or taken medication",No Coverage
+Marfan Syndrome,"Medically diagnosed, treated, or taken medication",No Coverage
+Mental Retardation,"Medically diagnosed, treated, or taken medication",No Coverage
+Motor Neuron Disease,"Medically diagnosed, treated, or taken medication",No Coverage
+Multiple Sclerosis (MS),"Medically diagnosed, treated, or taken medication",Return of Premium
+Muscular Dystrophy,"Medically diagnosed, treated, or taken medication",No Coverage
+Neuro-Muscular Disease,"Medically diagnosed, treated, or taken medication for (including, but not limited to cerebral palsy, multiple sclerosis, or Parkinson's disease)",Return of Premium
+Obesity,Has surgical treatment for morbid obesity within the past 12 months,Return of Premium
+Organ Transplant,Has ever had or medically advised to have,No Coverage
+Paralysis,"Medically diagnosed, treated, or taken medication for paralysis of two or more extremities",Return of Premium
+Renal Insufficiency,"Medically diagnosed, treated, or taken medication",No Coverage
+Rheumatoid Arthritis,"Medically diagnosed, treated, or taken medication",Return of Premium
+Schizophrenia,"Medically diagnosed, treated, or taken medication",No Coverage
+Seizures,"Medically diagnosed, treated, or taken medication within the past three years",Return of Premium
+Sickle Cell Anemia,"Medically diagnosed, treated, or taken medication",No Coverage
+Stroke,"Medically diagnosed, treated, or taken medication",No Coverage
+Systemic Lupus (SLE),"Medically diagnosed, treated, or taken medication",No Coverage
+Ulcerative Colitis,"Medically diagnosed, treated, or taken medication",Return of Premium

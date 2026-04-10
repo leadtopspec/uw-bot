@@ -1,0 +1,82 @@
+CONDITION,CRITERIA,PLAN TO APPLY FOR
+Organ Transplant,,Decline
+Bone Marrow Transplant,,Decline
+Kidney Failure,,Decline
+Renal Failure,,Decline
+Dialysis,,Decline
+Liver Failure,,Decline
+Cirrhosis,,Decline
+Hepatitis Severe,,Decline
+ALS,,Decline
+Lou Gehrig's Disease,,Decline
+Multiple Sclerosis,,Decline
+Muscular Dystrophy,,Decline
+Parkinson's Disease,,Decline
+Alzheimer's,,Decline
+Dementia,,Decline
+Huntington's Disease,,Decline
+Brain Tumor,,Decline
+Paralysis,,Decline
+Quadriplegia,,Decline
+Organ Failure,,Decline
+Terminal Illness,,Decline
+Cancer Metastatic,,Decline
+Cancer Stage 4,,Decline
+Leukemia Active,,Decline
+Lymphoma Active,,Decline
+Oxygen Use,,Decline
+Respiratory Failure,,Decline
+Emphysema Severe,,Decline
+Chronic Bronchitis Severe,,Decline
+Hospice Care,,Decline
+Bedridden,,Decline
+Wheelchair Bound,,Decline
+ADL Assistance,,Decline
+Home Health Care,,Decline
+Currently Hospitalized,,Decline
+Pending Surgery,,Decline
+Recent Surgery,,Decline
+Heart Attack,Within 12 months,Decline
+Stroke,Within 12 months,Decline
+TIA,Within 12 months,Decline
+Cancer,Within 2 years,Decline
+COPD,With nicotine,Eagle Select 2 Nicotine
+COPD,Non-nicotine,Eagle Select 2 Non-nicotine
+Emphysema,With nicotine,Eagle Select 2 Nicotine
+Chronic Bronchitis,With nicotine,Eagle Select 2 Nicotine
+Asthma Severe,,Eagle Select 2
+Asthma Mild,,Eagle Select 1
+Stroke,Over 12 months,Eagle Select 2
+TIA,Over 12 months,Eagle Select 2
+Heart Disease,With nicotine,Eagle Select 2 Nicotine
+Heart Disease,Non-nicotine,Eagle Select 2 Non-nicotine
+Coronary Artery Disease,,Eagle Select 2
+Heart Attack,Over 12 months,Eagle Select 2
+Diabetes,With complications,Eagle Select 2
+Diabetes,No complications,Eagle Select 1
+Diabetes Neuropathy,,Eagle Select 2
+Diabetes Retinopathy,,Eagle Select 2
+Diabetes Insulin,,Eagle Select 2
+High Blood Pressure,Controlled,Eagle Select 1
+High Blood Pressure,Uncontrolled,Eagle Select 2
+Peripheral Vascular Disease,,Eagle Select 2
+Peripheral Artery Disease,,Eagle Select 2
+Cancer,Over 2 years,Eagle Select 2
+Cancer,Over 5 years,Eagle Select 1
+Kidney Disease Mild,,Eagle Select 2
+Chronic Kidney Disease,,Eagle Select 2
+Liver Disease Mild,,Eagle Select 2
+Hepatitis B,,Eagle Select 2
+Hepatitis C,,Eagle Select 2
+Depression Mild,,Eagle Select 1
+Depression Severe,,Eagle Select 2
+Anxiety,,Eagle Select 1
+Bipolar Disorder,,Eagle Select 2
+Schizophrenia,,Decline
+Seizures,,Eagle Select 2
+Epilepsy,,Eagle Select 2
+Arthritis,,Eagle Select 1
+Rheumatoid Arthritis,,Eagle Select 2
+Obesity,,Eagle Select 1
+No Conditions,,Eagle Select 1
+Healthy,,Eagle Select 1

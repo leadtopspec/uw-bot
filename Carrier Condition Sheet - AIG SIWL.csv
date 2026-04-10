@@ -1,0 +1,113 @@
+CONDITION,SUB CONDITION,TIME FRAME,DECISION
+Alzheimer’s or Dementia,,Ever,Decline
+Arthritis (Rheumatoid or Psoriatic),,Last 48 Months,Level
+Blood condition,Myelodysplastic Syndrome (MDS),Ever,Decline
+Bone Marrow Transplant,,Ever,Decline
+Brain Aneurysm,,Last 6 Months,Decline
+Brain Aneurysm,,Last 24 Months but with surgery to repair,Level
+Brain Aneurysm,,Last 24 Months without a surgery to repair,Graded
+"Brain Disease, Spinal Cord Disease, Nervous System Disease or Disorder",Huntington's Disease,Ever,Decline
+"Brain Disease, Spinal Cord Disease, Nervous System Disease or Disorder",Lou Gehrig's Disease (ALS),Ever,Decline
+"Brain Disease, Spinal Cord Disease, Nervous System Disease or Disorder",Multiple Sclerosis,Ever,Graded
+"Brain Disease, Spinal Cord Disease, Nervous System Disease or Disorder",Parkinson's Disease,Ever,Graded
+Cancer,Bladder,Last 48 Months,Graded
+Cancer,Bone,Last 48 Months,Graded
+Cancer,Brain,Last 24 Months,Decline
+Cancer,Breast Stage I,Last 48 Months,Level
+Cancer,Breast Stage II,Last 48 Months,Graded
+Cancer,Carcinoid or Neuroendocrine Tumor,Last 24 Months,Decline
+Cancer,Cervical Stage I,Last 48 Months,Level
+Cancer,Cervical Stage II,Last 48 Months,Graded
+Cancer,Colon Rectum Anus Cancer Stage I,Last 48 Months,Level
+Cancer,Colon Rectum Anus Cancer Stage II,Last 48 Months,Graded
+Cancer,Endometrial (Uterine) Stage I,Last 48 Months,Level
+Cancer,Endometrial (Uterine) Stage II,Last 48 Months,Graded
+Cancer,Esophageal,Last 24 Months,Decline
+Cancer,Head or Neck,Last 24 Months,Decline
+Cancer,Kidney or Ureter Stage I,Last 48 Months,Level
+Cancer,Kidney or Ureter Stage II,Last 48 Months,Graded
+Cancer,Leukemia,Last 24 Months,Decline
+Cancer,Liver,Last 24 Months,Decline
+Cancer,Lung,Last 24 Months,Decline
+Cancer,Lymphoma,Last 24 Months,Decline
+Cancer,Melanoma (skin/mole) Stage I,Last 48 Months,Level
+Cancer,Melanoma (skin/mole) Stage II,Last 48 Months,Graded
+Cancer,Metastatic or Recurrent Cancer of the same type (Stage III or Stage IV cancer),Ever,Decline
+Cancer,Multiple Myeloma,Last 24 Months,Decline
+Cancer,Ovarian,Last 24 Months,Decline
+Cancer,Pancreas,Last 24 Months,Decline
+Cancer,Prostate Stage I,Last 48 Months,Level
+Cancer,Prostate Stage II,Last 48 Months,Graded
+Cancer,Sarcoma,Last 24 Months,Decline
+Cancer,Small Intestine,Last 24 Months,Decline
+Cancer,Stomach,Last 24 Months,Decline
+Cancer,Testicular Stage I,Last 48 Months,Level
+Cancer,Testicular Stage II,Last 48 Months,Graded
+Cancer,Thyroid Stage I,Last 48 Months,Level
+Cancer,Thyroid Stage II,Last 48 Months,Graded
+Cancer,Other Cancer Not Listed,Last 48 Months,Graded
+Connective Tissue Disorder,Scleroderma/Systemic Sclerosis,Last 48 Months,Graded
+Declined for Life Insurance,,Within last 12 months,Decline
+"Diabetic, Diabetes or Complications from Diabetes",Amputation due to diabetic complications,Ever,Decline
+"Diabetic, Diabetes or Complications from Diabetes",Diabetes,A1C = 8.6 or Less,"Graded if on Insulin, Level if not on Insulin"
+"Diabetic, Diabetes or Complications from Diabetes",Diabetes,A1C = 8.7 to 9.9,Graded
+"Diabetic, Diabetes or Complications from Diabetes",Diabetes,A1C = 10+,Decline
+"Diabetic, Diabetes or Complications from Diabetes",Hospitalization due to diabetes,Last 24 months,Decline
+"Diabetic, Diabetes or Complications from Diabetes",If also had Stroke or also had Coronary Disease,Ever,Decline
+"Drug Abuse, Alcohol Abuse or Substance Abuse","Narcotics without a prescription (such as amphetamines, hallucinogens, heroin, or cocaine)",Last 24 months,Decline
+"Drug Abuse, Alcohol Abuse or Substance Abuse",,Last 24 months,Graded
+"Felony, DUI, Arrested, Incarcerated","Driving while impaired, intoxicated or under the influence of drugs or alcohol",Last 24 months,Decline
+"Felony, DUI, Arrested, Incarcerated",Felony,Last 24 months,Decline
+"Felony, DUI, Arrested, Incarcerated",Incarcerated in a Prison or Jail,Currently,Decline
+"Heart Medical History, TIA, or Strokes",Angina Treated with Medication,Last 24 months & Non-Tobacco,Level
+"Heart Medical History, TIA, or Strokes",Angina Treated with Medication,Last 24 months & Tobacco,Graded
+"Heart Medical History, TIA, or Strokes",Angina Treated with Medication,Last 6 months,Decline
+"Heart Medical History, TIA, or Strokes",Atrial Fibrillation or Irregular Heart Rhythm,"In the last 24 months, have you been diagnosed with chronic atrial fibrillation? If Yes...",Graded
+"Heart Medical History, TIA, or Strokes",Atrial Fibrillation or Irregular Heart Rhythm,"If No…. • Are you on daily blood thinner/ anticoagulant such as Xarelto, Eliquis, Pradaxa or Coumadin (Warfarin)? Yes",Level
+"Heart Medical History, TIA, or Strokes",Atrial Fibrillation or Irregular Heart Rhythm,"• Are you on daily blood thinner/ anticoagulant such as Xarelto, Eliquis, Pradaxa or Coumadin (Warfarin)? No",Graded
+"Heart Medical History, TIA, or Strokes",Coronary Artery Disease with Angioplasty/ Stenting,Last 24 months & Non-Tobacco,Level
+"Heart Medical History, TIA, or Strokes",Coronary Artery Disease with Angioplasty/ Stenting,Last 24 months & Tobacco,Graded
+"Heart Medical History, TIA, or Strokes",Coronary Artery Disease with Angioplasty/ Stenting,Last 6 months,Decline
+"Heart Medical History, TIA, or Strokes",Coronary Artery Disease with Bypass Grafting,Last 24 months & Non-Tobacco,Level
+"Heart Medical History, TIA, or Strokes",Coronary Artery Disease with Bypass Grafting,Last 24 months & Tobacco,Graded
+"Heart Medical History, TIA, or Strokes",Coronary Artery Disease with Bypass Grafting,Last 6 months,Decline
+"Heart Medical History, TIA, or Strokes",Myocardial Infarction (heart attack),Last 24 months & Non-Tobacco,Level
+"Heart Medical History, TIA, or Strokes",Myocardial Infarction (heart attack),Last 24 months & Tobacco,Graded
+"Heart Medical History, TIA, or Strokes",Myocardial Infarction (heart attack),Last 6 months,Decline
+"Heart Medical History, TIA, or Strokes",Recurrent Episodes of TIA,Ever,Decline
+"Heart Medical History, TIA, or Strokes",Stroke,Last 12 months,Decline
+"Heart Medical History, TIA, or Strokes",Stroke,Last 24 months,Graded
+"Heart Medical History, TIA, or Strokes",Transient Ischemic Attack (TIA),Last 6 Months,Decline
+"HIV, AIDS, ARC",,Ever,Decline
+"Kidney, Renal, or on Dialysis",Advanced or End Stage Renal Disease or in need of dialysis,Ever,Decline
+"Kidney, Renal, or on Dialysis",Chronic Kidney Disease (including chronic renal insufficiency),Last 48 Months,Graded
+Liver,Hepatitis B,Ever,Graded
+Liver Cirrhosis,,Ever,Decline
+"Lung Disesase, COPD, Chronic Bronchitis",Chronic Bronchitis (Chronic Cough),Hospitalized more than once in the past 24 months,Decline
+"Lung Disesase, COPD, Chronic Bronchitis",Chronic Obstructive Pulmonary Disease (COPD,Hospitalized more than once in the past 24 months,Decline
+"Lung Disesase, COPD, Chronic Bronchitis",Chronic Obstructive Pulmonary Disease (COPD),"Not Hospitalized in last 24 months, non tobacco user",Graded
+"Lung Disesase, COPD, Chronic Bronchitis",Chronic Obstructive Pulmonary Disease (COPD),Tobacco User,Graded
+"Lung Disesase, COPD, Chronic Bronchitis",Emphysema,Hospitalized more than once in the past 24 months,Decline
+Lupus,,Last 48 Months,Graded
+"Mental Illness, Suicide Attempts, or any Mental Incapacity",Bipolar Disorder (or Manic-Depressive Disorder,) Last 48 Months,Graded
+"Mental Illness, Suicide Attempts, or any Mental Incapacity",Mental Incapacity,Ever,Decline
+"Mental Illness, Suicide Attempts, or any Mental Incapacity",Psychotic Event,Hospitalized in the last 36 months,Decline
+"Mental Illness, Suicide Attempts, or any Mental Incapacity",Schizophrenia,Hospitalized in the last 36 months,Decline
+"Mental Illness, Suicide Attempts, or any Mental Incapacity",Schizophrenia,Ever,Graded
+"Mental Illness, Suicide Attempts, or any Mental Incapacity",Suicide Attempt,Ever,Decline
+Muscle diseases,Dermatomyositis,Last 48 months,Graded
+Organ Transplant,,Ever,Decline
+Weight Loss that is unexplained,,Last 12 months,Graded
+"Wheelchair Dependent, Electric Scooter Dependent, Bedridden, in a Nursing Home, or Hospice",Assistance with ADLs due to a chronic or debilitating condition,Currently,Decline
+"Wheelchair Dependent, Electric Scooter Dependent, Bedridden, in a Nursing Home, or Hospice",Bedridden,Currently,Decline
+"Wheelchair Dependent, Electric Scooter Dependent, Bedridden, in a Nursing Home, or Hospice",Confined to any Skilled Nursing Facility or Hospital Facility,Currently,Decline
+"Wheelchair Dependent, Electric Scooter Dependent, Bedridden, in a Nursing Home, or Hospice",Require Electric Scooter due to a debilitating condition,Currently,Decline
+"Wheelchair Dependent, Electric Scooter Dependent, Bedridden, in a Nursing Home, or Hospice",Home Health Care,Currently or been advised to,Decline
+"Wheelchair Dependent, Electric Scooter Dependent, Bedridden, in a Nursing Home, or Hospice",Hospice Care,Currently or been advised to,Decline
+"Wheelchair Dependent, Electric Scooter Dependent, Bedridden, in a Nursing Home, or Hospice",Nursing Home,Currently or been advised to,Decline
+"Wheelchair Dependent, Electric Scooter Dependent, Bedridden, in a Nursing Home, or Hospice",Paraplegia,Currently,Decline
+"Wheelchair Dependent, Electric Scooter Dependent, Bedridden, in a Nursing Home, or Hospice",Quadriplegia,Currently,Decline
+"Wheelchair Dependent, Electric Scooter Dependent, Bedridden, in a Nursing Home, or Hospice",Require Wheelchair due to a debilitating condition,Currently,Decline
+Other,Require Oxygen Currently (other than for sleep apnea),Currently,Decline
+Other,Sickle Cell Anemia,Ever,Decline
+Other,Terminal Illness or Terminal Health Conditions,Expected to die within 12 months,Decline
