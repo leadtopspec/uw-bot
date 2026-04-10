@@ -5,7 +5,6 @@ from discord.ext import commands
 from discord import app_commands
 
 TOKEN = os.getenv("DISCORD_TOKEN")
-print("TOKEN:", TOKEN)
 
 PRODUCTS = {
     "American Amicable": {"Senior Choice": {"coverage_type": "Whole Life", "min_age": 50, "max_age": 85, "csv_file": "Carrier Condition Sheet - AMAM SC.csv"}, "Family Choice": {"coverage_type": "Whole Life", "min_age": 0, "max_age": 49, "csv_file": "Carrier Condition Sheet - AMAM FC.csv"}},
@@ -16,6 +15,8 @@ PRODUCTS = {
 
 RESULT_PRIORITY = {"Immediate": 1, "Level": 1, "Allowed": 1, "Eagle Select 1": 1, "Graded": 2, "Eagle Select 2": 2, "Eagle Select 2 Non-nicotine": 2, "Eagle Select 2 Nicotine": 2, "ROP": 3, "Return of Premium": 3, "Eagle Select 3": 3, "Guaranteed Issue Fallback": 4, "Decline": 99, "DECLINE": 99, "No Coverage": 99, "No Match Found": 100}
 BAD_OUTCOMES = {"Decline", "DECLINE", "No Coverage", "No Match Found"}
+DECISION_COLORS = {"Immediate": 0x00ff41, "Level": 0x00ff41, "Allowed": 0x00ff41, "Eagle Select 1": 0x00ff41, "Graded": 0xffaa00, "Eagle Select 2": 0xffaa00, "Eagle Select 2 Non-nicotine": 0xffaa00, "Eagle Select 2 Nicotine": 0xffaa00, "ROP": 0xff6b6b, "Return of Premium": 0xff6b6b, "Eagle Select 3": 0xff6b6b, "Guaranteed Issue Fallback": 0x9370db, "Decline": 0xff0000, "DECLINE": 0xff0000, "No Coverage": 0xff0000, "No Match Found": 0x808080}
+DECISION_EMOJI = {"Immediate": "✅", "Level": "✅", "Allowed": "✅", "Eagle Select 1": "✅", "Graded": "⚠️", "Eagle Select 2": "⚠️", "Eagle Select 2 Non-nicotine": "⚠️", "Eagle Select 2 Nicotine": "⚠️", "ROP": "📋", "Return of Premium": "📋", "Eagle Select 3": "📋", "Guaranteed Issue Fallback": "🛡️", "Decline": "❌", "DECLINE": "❌", "No Coverage": "❌", "No Match Found": "❓"}
 
 intents = discord.Intents.default()
 intents.message_content = True
@@ -92,14 +93,16 @@ async def process_uw_query(age, conditions):
                 if matched_rules:
                     matched_rules.sort(key=lambda r: (-r["score"], RESULT_PRIORITY.get(r["decision"], 50)))
                     best = matched_rules[0]
-                    chart_results.append({"carrier": carrier, "product": product_name, "coverage_type": info["coverage_type"], "decision": best["decision"], "score": best["score"], "forced": False, "matched_condition": best["condition"], "criteria": best["criteria"] or "No extra criteria listed."})
+                    chart_results.append({"carrier": carrier, "product": product_name, "coverage_type": info["coverage_type"], "decision": best["decision"], "score": best["score"], "forced": False, "matched_condition": best["condition"], "criteria": best["criteria"] or "No extra criteria"})
                 else:
-                    chart_results.append({"carrier": carrier, "product": product_name, "coverage_type": info["coverage_type"], "decision": "No Match Found", "score": 0, "forced": False, "matched_condition": "", "criteria": "No chart row matched this input yet."})
+                    chart_results.append({"carrier": carrier, "product": product_name, "coverage_type": info["coverage_type"], "decision": "No Match Found", "score": 0, "forced": False, "matched_condition": "", "criteria": "No match yet"})
             except Exception as e:
-                file_errors.append(f"{carrier} — {product_name} ({str(e)})")
+                file_errors.append(f"{carrier} — {product_name}")
     
     if not chart_results and file_errors:
-        return None, f"❌ **Chart files not loading**\n\n**Age:** {age}\n**Input:** {conditions}"
+        embed = discord.Embed(title="❌ File Loading Error", description=f"Age: **{age}** | Input: **{conditions}**", color=0xff0000)
+        embed.add_field(name="Missing Files", value="\n".join(file_errors), inline=False)
+        return embed, None
     
     chart_results.sort(key=lambda x: (0 if x.get("forced") else 1, RESULT_PRIORITY.get(x["decision"], 50), -x["score"]))
     has_real_option = any(r["decision"] not in BAD_OUTCOMES for r in chart_results)
@@ -107,49 +110,66 @@ async def process_uw_query(age, conditions):
     final_results.sort(key=lambda x: (0 if x.get("forced") else 1, RESULT_PRIORITY.get(x["decision"], 50), -x["score"]))
     
     if not final_results:
-        return None, f"❌ **No Coverage Available**\n\n**Age:** {age}\n**Input:** {conditions}"
+        embed = discord.Embed(title="❌ No Coverage Available", description=f"Age: **{age}** | Input: **{conditions}**", color=0xff0000)
+        return embed, None
     
     best = final_results[0]
-    embed = discord.Embed(title="🩺 UW RESULT", color=discord.Color.blue())
-    embed.add_field(name="Age", value=str(age), inline=True)
-    embed.add_field(name="Input", value=conditions, inline=True)
-    embed.add_field(name="\u200b", value="\u200b", inline=True)
-    embed.add_field(name="🏆 Best Fit", value=f"• **Carrier:** {best['carrier']}\n• **Product:** {best['product']}\n• **Coverage:** {best['coverage_type']}\n• **Result:** **{best['decision']}**", inline=False)
-    embed.add_field(name="📋 Criteria", value=best['criteria'], inline=False)
-    embed.add_field(name="📊 All Options", value="\n".join([f"• **{r['carrier']} — {r['product']}** → **{r['decision']}**" for r in final_results]), inline=False)
+    color = DECISION_COLORS.get(best["decision"], 0x7289da)
+    emoji = DECISION_EMOJI.get(best["decision"], "❓")
+    
+    embed = discord.Embed(title=f"{emoji} UNDERWRITING RESULT", color=color)
+    embed.add_field(name="🎯 Client Info", value=f"**Age:** {age}\n**Condition:** {conditions}", inline=False)
+    embed.add_field(name="🏆 BEST FIT", value=f"**{best['carrier']}** → **{best['product']}**\n{best['coverage_type']}\n\n**Decision:** `{best['decision']}`", inline=False)
+    embed.add_field(name="📝 Details", value=best['criteria'], inline=False)
+    
+    options_text = ""
+    for i, r in enumerate(final_results[:5], 1):
+        opt_emoji = DECISION_EMOJI.get(r["decision"], "❓")
+        options_text += f"{i}. {opt_emoji} **{r['carrier']}** - {r['product']}: `{r['decision']}`\n"
+    if len(final_results) > 5:
+        options_text += f"\n... and {len(final_results) - 5} more option(s)"
+    
+    embed.add_field(name="📊 All Options", value=options_text, inline=False)
+    embed.set_footer(text=f"UW Bot v2.0 | {len(final_results)} total options")
+    
     return embed, None
 
 @bot.tree.command(name="uw", description="Check underwriting eligibility")
-@app_commands.describe(age="Client age", conditions="Health conditions")
+@app_commands.describe(age="Client age (e.g., 65)", conditions="Health condition(s) (e.g., COPD)")
 async def slash_uw(interaction, age: int, conditions: str):
     await interaction.response.defer()
-    embed, error = await process_uw_query(age, conditions)
-    await interaction.followup.send(embed=embed if embed else None, content=error if error else None)
+    embed, _ = await process_uw_query(age, conditions)
+    await interaction.followup.send(embed=embed)
 
-@bot.tree.command(name="carriers", description="List carriers")
+@bot.tree.command(name="carriers", description="View all carriers and products")
 async def slash_carriers(interaction):
-    embed = discord.Embed(title="📋 Available Carriers", color=discord.Color.green())
+    embed = discord.Embed(title="🏢 Available Carriers & Products", color=0x2b82c6, description="Complete product lineup across all carriers")
     for carrier, products in PRODUCTS.items():
-        embed.add_field(name=carrier, value=", ".join(products.keys()), inline=False)
+        product_list = ", ".join([f"`{p}`" for p in products.keys()])
+        embed.add_field(name=f"📌 {carrier}", value=product_list, inline=False)
+    embed.set_footer(text=f"Total: {sum(len(p) for p in PRODUCTS.values())} products")
     await interaction.response.send_message(embed=embed)
 
-@bot.tree.command(name="conditions", description="List all conditions")
+@bot.tree.command(name="conditions", description="View all supported health conditions")
 async def slash_conditions(interaction):
     await interaction.response.defer()
     conds = load_all_conditions()
-    embed = discord.Embed(title=f"🏥 Conditions ({len(conds)} total)", color=discord.Color.purple())
-    embed.description = "\n".join(conds[:50])
-    if len(conds) > 50:
-        embed.description += f"\n\n... and {len(conds) - 50} more conditions"
+    embed = discord.Embed(title="🏥 Supported Health Conditions", color=0x9370db, description=f"Database of {len(conds)} underwriting conditions")
+    cond_text = "\n".join([f"• {c}" for c in conds[:40]])
+    embed.add_field(name="Conditions (Sample)", value=cond_text, inline=False)
+    if len(conds) > 40:
+        embed.add_field(name="More", value=f"... and **{len(conds) - 40}** additional conditions", inline=False)
+    embed.set_footer(text=f"Showing 1-40 of {len(conds)} total")
     await interaction.followup.send(embed=embed)
 
-@bot.tree.command(name="help", description="Show help")
+@bot.tree.command(name="help", description="Get help with bot commands")
 async def slash_help(interaction):
-    embed = discord.Embed(title="📖 UW Bot Help", color=discord.Color.gold())
-    embed.add_field(name="/uw <age> <conditions>", value="Check eligibility", inline=False)
-    embed.add_field(name="/carriers", value="List carriers", inline=False)
-    embed.add_field(name="/conditions", value="List conditions", inline=False)
-    embed.add_field(name="/help", value="Show this message", inline=False)
+    embed = discord.Embed(title="📖 UW Bot Help", color=0xf0a000, description="Master your underwriting workflow")
+    embed.add_field(name="/uw <age> <conditions>", value="**Check eligibility across all carriers**\nExample: `/uw 65 COPD`\nGet instant underwriting decisions with carrier recommendations", inline=False)
+    embed.add_field(name="/carriers", value="**View all available carriers and products**\nBrowse the complete product lineup", inline=False)
+    embed.add_field(name="/conditions", value="**See all supported health conditions**\nSearch the underwriting database", inline=False)
+    embed.add_field(name="💡 Tips", value="• Enter conditions naturally (case-insensitive)\n• Combine multiple conditions: `/uw 65 COPD diabetes`\n• Results show best fit first, ranked by priority", inline=False)
+    embed.set_footer(text="UW Bot v2.0 | For assistance, contact your team lead")
     await interaction.response.send_message(embed=embed)
 
 bot.run(TOKEN)
